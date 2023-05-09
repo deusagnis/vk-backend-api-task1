@@ -25,6 +25,19 @@ Route::prefix('{microserviceName}')->group(function (){
     Route::prefix('monitoring')->group(function (){
         Route::any('ping','MonitoringController@ping');
     });
+
+    /**
+     * Группа рутов для задания.
+     */
+    Route::prefix('backend-api/task1')->group(function (){
+        /**
+         * Группа рутов для работы с Событиями.
+         */
+        Route::prefix('event')->group(function (){
+            Route::any('add','EventController@add');
+            Route::any('stat','EventController@stat');
+        });
+    });
 });
 
 
