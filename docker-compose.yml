@@ -1,33 +1,43 @@
 version: "3.7"
 services:
-    lv:
+    app:
         build:
             args:
                 user: sammy
                 uid: 1000
             context: ./
             dockerfile: Dockerfile
-        image: msvcname
-        container_name: msvcname-lv
-        restart: unless-stopped
+        image: vk-backend-api-task1-app
+        container_name: vk-backend-api-t1-app
+        restart: on-failure
         working_dir: /var/www/
         volumes:
             - ./:/var/www
         networks:
-            - msvcname
-
+            - vk-backend-api-net
+    db:
+        environment:
+            - MARIADB_ROOT_PASSWORD=root
+        user: "1000:1000"
+        image: mariadb
+        container_name: vk-backend-api-t1-db
+        restart: on-failure
+        volumes:
+            - ./maria-db:/var/lib/mysql
+            - ./docker-compose/maria-db/init.sql:/docker-entrypoint-initdb.d/init.sql
+        networks:
+            - vk-backend-api-net
     nginx:
         image: nginx:alpine
-        container_name: msvcname-nginx
-        restart: unless-stopped
+        container_name: vk-backend-api-t1-nginx
+        restart: on-failure
         ports:
-            - 8004:80
+            - "9101:80"
         volumes:
             - ./:/var/www
             - ./docker-compose/nginx:/etc/nginx/conf.d/
         networks:
-            - msvcname
-
+            - vk-backend-api-net
 networks:
-    msvcname:
+    vk-backend-api-net:
         driver: bridge
